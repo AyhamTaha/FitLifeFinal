@@ -1,0 +1,31 @@
+SET NAMES utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `membership_plans` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `gym_id` int(11) NOT NULL,
+  `name` varchar(150) NOT NULL,
+  `description` text DEFAULT NULL,
+  `duration_value` int(11) NOT NULL,
+  `duration_unit` enum('day','week','month','year') NOT NULL,
+  `price` decimal(12,2) NOT NULL,
+  `currency` enum('USD','LBP') NOT NULL,
+  `freeze_days_allowed` int(11) NOT NULL DEFAULT 0,
+  `visit_limit` int(11) DEFAULT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `created_by` int(11) DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_membership_plans_gym_name` (`gym_id`,`name`),
+  KEY `idx_membership_plans_gym_active_name` (`gym_id`,`is_active`,`name`),
+  KEY `idx_membership_plans_created_by` (`created_by`),
+  KEY `idx_membership_plans_updated_by` (`updated_by`),
+  CONSTRAINT `fk_membership_plans_gym` FOREIGN KEY (`gym_id`) REFERENCES `gyms` (`id`) ON UPDATE CASCADE ON DELETE RESTRICT,
+  CONSTRAINT `fk_membership_plans_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON UPDATE CASCADE ON DELETE SET NULL,
+  CONSTRAINT `fk_membership_plans_updated_by` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`) ON UPDATE CASCADE ON DELETE SET NULL,
+  CONSTRAINT `chk_membership_plans_duration_value` CHECK (`duration_value` > 0),
+  CONSTRAINT `chk_membership_plans_price` CHECK (`price` >= 0),
+  CONSTRAINT `chk_membership_plans_freeze_days` CHECK (`freeze_days_allowed` >= 0),
+  CONSTRAINT `chk_membership_plans_visit_limit` CHECK (`visit_limit` IS NULL OR `visit_limit` > 0)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

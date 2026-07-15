@@ -28,12 +28,12 @@ $exercises = $result->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
 ?>
 
-<link rel="stylesheet" href="/fitness-website/public/css/style.css">
+<link rel="stylesheet" href="<?= $fitlifeBasePath ?>/public/css/style.css">
 
 <section class="container">
   <nav class="breadcrumbs">
-    <a href="/fitness-website/views/auth/home.php">Home</a> ›
-    <a href="/fitness-website/views/workouts/muscles.php">Workout Library</a> ›
+    <a href="<?= $fitlifeBasePath ?>/views/auth/home.php">Home</a> ›
+    <a href="<?= $fitlifeBasePath ?>/views/workouts/muscles.php">Workout Library</a> ›
     <span><?php echo htmlspecialchars($muscleName); ?></span>
   </nav>
 
@@ -62,7 +62,7 @@ $stmt->close();
       <?php foreach ($exercises as $exercise): ?>
         <?php
           $difficultyClass = 'badge-' . strtolower($exercise['difficulty']); // e.g. badge-beginner
-          $imgPath = '/fitness-website/public/images/' . $exercise['image'];
+          $imgPath = fitlife_url('public/images/' . $exercise['image']);
         ?>
         <article class="exercise-card"
                  data-difficulty="<?php echo htmlspecialchars($exercise['difficulty']); ?>">

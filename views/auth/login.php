@@ -1,12 +1,21 @@
 <?php
-$error = isset($_GET['error']) ? $_GET['error'] : "";
+require_once __DIR__ . '/../../includes/security.php';
+
+fitlife_start_session();
+if (fitlife_is_authenticated()) {
+    fitlife_redirect(isset($_SESSION['gym_role']) ? 'views/dashboard/index.php' : 'views/auth/home.php');
+}
+
+$flashes = fitlife_take_flashes();
+$fitlifeBasePath = fitlife_escape(FITLIFE_BASE_PATH);
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
-    <link rel="stylesheet" href="/fitness-website/public/css/styleauth.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="<?= $fitlifeBasePath ?>/public/css/styleauth.css">
 </head>
 
 <body class="login">
@@ -16,24 +25,27 @@ $error = isset($_GET['error']) ? $_GET['error'] : "";
     <h2>Welcome Back</h2>
 
     <div class="back-home">
-        <a href="home.php"><span>&larr;</span> Back to Home</a>
+        <a href="<?= $fitlifeBasePath ?>/views/auth/home.php"><span>&larr;</span> Back to Home</a>
     </div>
 
-    <?php if ($error): ?>
-        <div class="auth-error"><?= htmlspecialchars($error) ?></div>
-    <?php endif; ?>
+    <?php foreach ($flashes as $flash): ?>
+        <div class="<?= $flash['type'] === 'success' ? 'auth-success' : 'auth-error' ?>">
+            <?= fitlife_escape($flash['message']) ?>
+        </div>
+    <?php endforeach; ?>
 
-    <form method="POST" action="loginproc.php">
+    <form method="POST" action="<?= $fitlifeBasePath ?>/views/auth/loginproc.php">
+        <?= fitlife_csrf_input() ?>
 
-        <input type="text" name="email" placeholder="Email">
+        <input type="email" name="email" placeholder="Email" maxlength="150" autocomplete="email" required>
 
-        <input type="password" name="password" placeholder="Password">
+        <input type="password" name="password" placeholder="Password" autocomplete="current-password" required>
 
         <input type="submit" value="Login">
 
         <p class="auth-link">
             Don’t have an account?
-            <a href="register.php">Register</a>
+            <a href="<?= $fitlifeBasePath ?>/views/auth/register.php">Register</a>
         </p>
 
     </form>

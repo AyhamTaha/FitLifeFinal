@@ -57,6 +57,17 @@ nav a:hover {
     color: #FF6600;
 }
 
+.nav-logout-form {
+    display: inline-flex;
+    margin: 0;
+}
+
+.nav-logout-button {
+    border: 0;
+    cursor: pointer;
+    font: inherit;
+}
+
 .btn-white {
     background: #fff;
     color: #000 !important;
@@ -127,6 +138,36 @@ nav a:hover {
 
 .btn-orange:hover {
     filter: brightness(1.05);
+}
+
+.gym-setup-banner {
+    background: linear-gradient(90deg, #1b0b02, #111827);
+    color: #fff;
+    padding: 18px 8%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    border-bottom: 1px solid rgba(255, 102, 0, 0.35);
+}
+
+.gym-setup-banner div {
+    display: grid;
+    gap: 4px;
+}
+
+.gym-setup-banner span {
+    color: #d1d5db;
+}
+
+.gym-setup-banner a {
+    flex: 0 0 auto;
+    padding: 11px 18px;
+    border-radius: 8px;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 700;
+    text-decoration: none;
 }
 
 .hero-img {
@@ -302,8 +343,21 @@ footer a {
 }
 
 @media (max-width: 850px) {
-    header {
+    #header {
         padding: 16px 5%;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    #header nav {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 12px 18px;
+    }
+
+    #header nav a {
+        flex-shrink: 0;
     }
 
     .hero {
@@ -315,6 +369,26 @@ footer a {
 
     .hero-text {
         max-width: none;
+        width: 100%;
+    }
+
+    .workout-header,
+    .program-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .workout-filters,
+    .program-filters {
+        width: 100%;
+    }
+
+    .workout-filters input,
+    .workout-filters select,
+    .program-filters input,
+    .program-filters select {
+        width: 100%;
+        min-width: 0;
     }
 
     .hero-img img {
@@ -323,6 +397,11 @@ footer a {
 
     .services {
         justify-content: center;
+    }
+
+    .gym-setup-banner {
+        align-items: flex-start;
+        flex-direction: column;
     }
 }
 
@@ -442,6 +521,16 @@ body.register {
     font-size: 14px;
 }
 
+.auth-success {
+    background: #dcfce7;
+    padding: 12px;
+    border-left: 5px solid #16a34a;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    color: #166534;
+    font-size: 14px;
+}
+
 /* Animation */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
@@ -450,6 +539,35 @@ body.register {
 
 /* Mobile Responsive for auth */
 @media (max-width: 480px) {
+    #header {
+        padding: 14px 4%;
+    }
+
+    #header nav {
+        gap: 10px 14px;
+    }
+
+    #header nav a {
+        font-size: 14px;
+    }
+
+    #header .btn-white {
+        padding: 8px 12px;
+    }
+
+    .hero {
+        padding: 40px 5% 55px;
+        gap: 30px;
+    }
+
+    .hero-img img {
+        width: 280px;
+    }
+
+    .hero-text h1 {
+        font-size: 2.4rem;
+    }
+
     .auth-card {
         padding: 28px;
     }

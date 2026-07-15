@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>FitLife — Nutrition Calculator</title>
-    <link rel="stylesheet" href="/fitness-website/public/css/stylenut.css">
+    <link rel="stylesheet" href="<?= $fitlifeBasePath ?>/public/css/stylenut.css">
     <meta name="viewport" content="width=device-width,initial-scale=1">
 </head>
 <body class="theme-light">
@@ -57,7 +57,8 @@
         </section>
     </div>
 
-    <form class="card form-card" method="POST" action="result.php" id="calcForm">
+    <form class="card form-card" method="POST" action="<?= $fitlifeBasePath ?>/views/nutrition/result.php" id="calcForm">
+        <?= fitlife_csrf_input() ?>
         <h3>Nutrition Calculator</h3>
 
         <div class="row">
@@ -150,4 +151,4 @@ switchEl.addEventListener('change', e => {
 </body>
 </html>
 
- <?php include __DIR__ . '/../templates/footer.php'; ?>  
+<?php include __DIR__ . '/../templates/footer.php'; ?>
