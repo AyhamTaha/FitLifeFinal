@@ -15,12 +15,12 @@ $result = $stmt->get_result();
 $program = $result->fetch_assoc();
 $stmt->close();
 ?>
-<link rel="stylesheet" href="/fitness-website/public/css/style.css">
+<link rel="stylesheet" href="<?= $fitlifeBasePath ?>/public/css/style.css">
 
 <section class="container">
   <nav class="breadcrumbs">
-    <a href="/fitness-website/views/auth/home.php">Home</a> ›
-    <a href="/fitness-website/views/programs/programs.php">Programs</a> ›
+    <a href="<?= $fitlifeBasePath ?>/views/auth/home.php">Home</a> ›
+    <a href="<?= $fitlifeBasePath ?>/views/programs/programs.php">Programs</a> ›
     <span><?php echo $program ? htmlspecialchars($program['name']) : 'Program'; ?></span>
   </nav>
 
@@ -99,7 +99,7 @@ $stmt->close();
                     $exerciseId = $item['exercise_id'];
                   ?>
                   <?php if ($exerciseId): ?>
-                    <?php $url = "/fitness-website/views/workouts/exercise.php?id=" . (int)$exerciseId; ?>
+                    <?php $url = fitlife_url('views/workouts/exercise.php?id=' . (int)$exerciseId); ?>
                     <li>
                       <a href="<?php echo $url; ?>">
                         <?php echo htmlspecialchars($text ?: $item['exercise_name']); ?>

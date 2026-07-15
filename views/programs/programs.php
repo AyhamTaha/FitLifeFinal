@@ -25,11 +25,11 @@ $goalMap = [
     'General fitness'  => 'general',
 ];
 ?>
-<link rel="stylesheet" href="/fitness-website/public/css/style.css">
+<link rel="stylesheet" href="<?= $fitlifeBasePath ?>/public/css/style.css">
 
 <section class="container">
   <nav class="breadcrumbs">
-    <a href="/fitness-website/views/auth/home.php">Home</a> ›
+    <a href="<?= $fitlifeBasePath ?>/views/auth/home.php">Home</a> ›
     <span>Programs</span>
   </nav>
 

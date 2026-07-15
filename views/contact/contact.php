@@ -1,8 +1,10 @@
 <?php
 // views/contact/contact.php
 
-include __DIR__ . '/../templates/header.php';
-require __DIR__ . '/../auth/dbconn.php'; // DB connection
+require_once __DIR__ . '/../auth/dbconn.php';
+require_once __DIR__ . '/../../includes/security.php';
+
+fitlife_start_session();
 
 // We’ll store actual text messages here
 $successMessage = '';
@@ -10,36 +12,38 @@ $errorMessage   = '';
 
 // Handle form submit
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    fitlife_require_csrf(isset($_POST['csrf_token']) ? (string)$_POST['csrf_token'] : null);
 
     // Simple values (you can add more validation if you want)
     $name    = trim($_POST['name'] ?? '');
     $email   = trim($_POST['email'] ?? '');
     $message = trim($_POST['message'] ?? '');
 
-    // Prepare statement (safer than putting values directly in SQL)
-    $stmt = $conn->prepare(
-        "INSERT INTO contact_messages (name, email, message) VALUES (?, ?, ?)"
-    );
-
-    if ($stmt) {
-        $stmt->bind_param("sss", $name, $email, $message);
-
-        if ($stmt->execute()) {
-            $successMessage = "Your message has been sent successfully!";
-        } else {
-            $errorMessage = "Something went wrong while sending your message. Please try again.";
-        }
-
-        $stmt->close();
+    if ($name === '' || strlen($name) > 100
+        || !filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($email) > 150
+        || $message === '' || strlen($message) > 5000) {
+        $errorMessage = "Please enter your name, a valid email address, and a message.";
     } else {
-        $errorMessage = "Could not prepare the database query.";
+      try {
+        $stmt = $conn->prepare(
+            "INSERT INTO contact_messages (name, email, message) VALUES (?, ?, ?)"
+        );
+        $stmt->bind_param("sss", $name, $email, $message);
+        $stmt->execute();
+        $stmt->close();
+        $successMessage = "Your message has been sent successfully!";
+      } catch (mysqli_sql_exception $exception) {
+        error_log('FitLife contact form failed: ' . $exception->getMessage());
+        $errorMessage = "Something went wrong while sending your message. Please try again.";
+      }
     }
 }
+include __DIR__ . '/../templates/header.php';
 ?>
- <link rel="stylesheet" href="/fitness-website/public/css/style.css">
+ <link rel="stylesheet" href="<?= $fitlifeBasePath ?>/public/css/style.css">
 <section class="container contact-page">
   <nav class="breadcrumbs">
-    <a href="/fitness-website/views/auth/home.php">Home</a> ›
+    <a href="<?= $fitlifeBasePath ?>/views/auth/home.php">Home</a> ›
     <span>Contact Us</span>
   </nav>
 
@@ -59,12 +63,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </header>
 
   <form action="" method="post" class="contact-form">
+    <?= fitlife_csrf_input() ?>
     <div class="form-group">
       <label for="name">Your Name</label>
       <input
         type="text"
         id="name"
         name="name"
+        maxlength="100"
         required
         placeholder="Enter your name"
       >
@@ -76,6 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         type="email"
         id="email"
         name="email"
+        maxlength="150"
         required
         placeholder="you@example.com"
       >
@@ -87,6 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         id="message"
         name="message"
         rows="5"
+        maxlength="5000"
         required
         placeholder="Write your message..."
       ></textarea>

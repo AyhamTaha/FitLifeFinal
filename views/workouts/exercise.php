@@ -30,7 +30,7 @@ if (!$exercise) {
 // 3) Image path handling (if DB has only filename)
 $imagePath = $exercise['image'] ?? '';
 if ($imagePath !== '' && $imagePath[0] !== '/') {
-    $imagePath = '/fitness-website/public/images/' . $imagePath;
+    $imagePath = fitlife_url('public/images/' . $imagePath);
 }
 
 // 4) Difficulty CSS class
@@ -81,15 +81,15 @@ if (!empty($programs)) {
     }
 }
 ?>
-<link rel="stylesheet" href="/fitness-website/public/css/style.css">
+<link rel="stylesheet" href="<?= $fitlifeBasePath ?>/public/css/style.css">
 
 <section class="container exercise-details">
 
   <!-- BREADCRUMBS -->
   <nav class="breadcrumbs">
-    <a href="/fitness-website/views/auth/home.php">Home</a> ›
-    <a href="/fitness-website/views/workouts/muscles.php">Workout Library</a> ›
-    <a href="/fitness-website/views/workouts/exercises.php?muscle_id=<?php echo $muscleIdForThisExercise; ?>">
+    <a href="<?= $fitlifeBasePath ?>/views/auth/home.php">Home</a> ›
+    <a href="<?= $fitlifeBasePath ?>/views/workouts/muscles.php">Workout Library</a> ›
+    <a href="<?= $fitlifeBasePath ?>/views/workouts/exercises.php?muscle_id=<?php echo $muscleIdForThisExercise; ?>">
       <?php echo htmlspecialchars($muscleTitleForThisExercise); ?> Exercises
     </a> ›
     <span><?php echo htmlspecialchars($exercise['name']); ?></span>
@@ -106,7 +106,7 @@ if (!empty($programs)) {
     </header>
 
     <!-- BACK BUTTON -->
-    <a href="/fitness-website/views/workouts/exercises.php?muscle_id=<?php echo $muscleIdForThisExercise; ?>"
+    <a href="<?= $fitlifeBasePath ?>/views/workouts/exercises.php?muscle_id=<?php echo $muscleIdForThisExercise; ?>"
        class="btn back-btn">
       ← Back to <?php echo htmlspecialchars($muscleTitleForThisExercise); ?> exercises
     </a>
@@ -157,7 +157,7 @@ if (!empty($programs)) {
       <ul>
         <?php foreach ($usedInPrograms as $usage): ?>
           <li>
-            <a href="/fitness-website/views/programs/program.php?id=<?php echo (int)$usage['program_id']; ?>">
+            <a href="<?= $fitlifeBasePath ?>/views/programs/program.php?id=<?php echo (int)$usage['program_id']; ?>">
               <?php echo htmlspecialchars($usage['program_name']); ?>
             </a>
             – <?php echo htmlspecialchars($usage['day_title']); ?>

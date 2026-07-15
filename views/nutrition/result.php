@@ -1,12 +1,17 @@
 <?php
- include __DIR__ . '/../templates/header.php';  
-require(__DIR__ . "/../auth/dbconn.php");
+require_once __DIR__ . '/../../includes/security.php';
+
+fitlife_start_session();
 
 // basic validation + sanitization
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: calculator.php');
+    header('Location: ' . fitlife_url('views/nutrition/calculator.php'));
     exit;
 }
+
+fitlife_require_csrf(isset($_POST['csrf_token']) ? (string)$_POST['csrf_token'] : null);
+
+require_once __DIR__ . '/../auth/dbconn.php';
 
 $weight   = floatval($_POST['weight'] ?? 0);
 $height   = floatval($_POST['height'] ?? 0);
@@ -15,9 +20,21 @@ $gender   = $_POST['gender'] ?? 'male';
 $goal     = strtolower($_POST['goal'] ?? 'maintain');
 $activity = $_POST['activity'] ?? 'Moderate';
 
-// simple checks
-if ($weight <= 0 || $height <= 0 || $age <= 0 || !in_array($goal, ['bulk','cut','maintain'])) {
-    echo "Invalid input. <a href='calculator.php'>Go back</a>";
+// Server-side checks mirror the form limits and constrain every choice.
+if ($weight < 30 || $weight > 300
+    || $height < 100 || $height > 250
+    || $age < 10 || $age > 100
+    || !in_array($gender, ['male', 'female'], true)
+    || !in_array($goal, ['bulk', 'cut', 'maintain'], true)
+    || !array_key_exists($activity, [
+        'Sedentary' => true,
+        'Light' => true,
+        'Moderate' => true,
+        'Active' => true,
+        'Veryactive' => true,
+    ])) {
+    http_response_code(422);
+    echo 'Invalid input. <a href="' . fitlife_escape(fitlife_url('views/nutrition/calculator.php')) . '">Go back</a>';
     exit;
 }
 
@@ -49,10 +66,32 @@ $fatPercent = ($goal === 'cut') ? 0.25 : 0.27;
 $fats       = round(($calories * $fatPercent) / 9, 1);
 $carbs      = round(($calories - ($protein*4 + $fats*9)) / 4, 1);
 
-// Database insert (simple)
-$sql = "INSERT INTO user_results (weight, height, age, gender, goal, calories, protein_g, carbs_g, fats_g)
-        VALUES ('$weight', '$height', '$age', '$gender', '$goal', '$calories', '$protein', '$carbs', '$fats')";
-mysqli_query($conn, $sql);
+// Save the estimate, but keep showing the calculated result if saving fails.
+$saveWarning = '';
+try {
+    $storedGender = ucfirst(strtolower($gender));
+    $stmt = $conn->prepare(
+        'INSERT INTO user_results (weight, height, age, gender, goal, calories, protein_g, carbs_g, fats_g)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
+    );
+    $stmt->bind_param(
+        'ddissdddd',
+        $weight,
+        $height,
+        $age,
+        $storedGender,
+        $goal,
+        $calories,
+        $protein,
+        $carbs,
+        $fats
+    );
+    $stmt->execute();
+    $stmt->close();
+} catch (mysqli_sql_exception $exception) {
+    error_log('FitLife nutrition result save failed: ' . $exception->getMessage());
+    $saveWarning = 'Your nutrition plan was calculated, but it could not be saved. You can still use the results below.';
+}
 
 // BMI
 $bmi        = $weight / (($height / 100) ** 2);
@@ -121,13 +160,14 @@ $mealPlans = [
 ];
 
 $plan = $mealPlans[$goal];
+include __DIR__ . '/../templates/header.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>FitLife — Nutrition Results</title>
-    <link rel="stylesheet" href="/fitness-website/public/css/stylenut.css">
+    <link rel="stylesheet" href="<?= $fitlifeBasePath ?>/public/css/stylenut.css">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -138,6 +178,9 @@ $plan = $mealPlans[$goal];
     <div class="topbar-left">
         <h1>FitLife — Your Nutrition Plan</h1>
         <p class="topbar-sub">Based on the data you entered in the calculator.</p>
+        <?php if ($saveWarning !== ''): ?>
+            <p class="error-msg"><?= htmlspecialchars($saveWarning) ?></p>
+        <?php endif; ?>
     </div>
     <div class="theme-toggle">
         <label class="switch">
