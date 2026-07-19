@@ -65,8 +65,8 @@ $isActive = (int)$plan['is_active'] === 1;
         <?php endif; ?>
     </article>
 
-    <aside class="history-grid" aria-label="Future subscription connection">
-        <article class="content-card future-card"><span>Phase 1 Step 4</span><h2>Subscriptions coming next</h2><p>This plan will be available for member subscriptions when Phase 1 Step 4 is implemented. No subscriptions or billing are created here.</p></article>
+    <aside class="history-grid" aria-label="Subscription connection">
+        <article class="content-card future-card"><span>Subscriptions</span><h2>Plan usage</h2><p>View subscriptions that use this membership plan. Billing is not created here.</p><a class="secondary-button button-link" href="<?= fitlife_escape(fitlife_url('views/dashboard/subscriptions.php?q=' . rawurlencode($plan['name']))) ?>">View Subscriptions</a></article>
     </aside>
 </section>
 <?php require __DIR__ . '/includes/footer.php'; ?>

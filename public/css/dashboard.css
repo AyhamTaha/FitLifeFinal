@@ -555,6 +555,21 @@ textarea:focus-visible {
     color: #d1d5db;
 }
 
+.status-expired {
+    background: rgba(120, 53, 15, 0.42);
+    color: #fcd34d;
+}
+
+.status-frozen {
+    background: rgba(30, 64, 175, 0.38);
+    color: #bfdbfe;
+}
+
+.status-cancelled {
+    background: rgba(127, 29, 29, 0.35);
+    color: #fecaca;
+}
+
 .empty-state,
 .unavailable-card {
     padding: clamp(40px, 8vw, 80px) 24px;
@@ -628,6 +643,19 @@ textarea:focus-visible {
     resize: vertical;
 }
 
+.field-help {
+    display: block;
+    margin-top: 8px;
+    color: var(--dashboard-muted);
+    font-size: 0.84rem;
+    line-height: 1.5;
+}
+
+.member-form button:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
 .form-actions,
 .heading-actions {
     display: flex;
@@ -694,6 +722,34 @@ textarea:focus-visible {
 .notes-block p {
     margin-top: 10px;
     overflow-wrap: anywhere;
+}
+
+.detail-link {
+    color: #ffb27f;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.detail-link:hover {
+    filter: brightness(1.12);
+}
+
+.lifecycle-actions {
+    margin-top: 24px;
+    padding-top: 22px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    border-top: 1px solid var(--dashboard-border);
+}
+
+.lifecycle-actions form {
+    margin: 0;
+}
+
+.lifecycle-actions p {
+    margin: 0;
 }
 
 .archive-form {
