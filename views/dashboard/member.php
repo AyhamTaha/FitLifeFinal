@@ -71,8 +71,8 @@ $genderLabel = $member['gender'] ? ucfirst(str_replace('_', ' ', (string)$member
         <?php endif; ?>
     </article>
 
-    <aside class="history-grid" aria-label="Future member history">
-        <article class="content-card future-card"><span>Phase 1 Step 4</span><h2>Membership history</h2><p>Plan subscriptions and membership history will be connected here in the next phase.</p></article>
+    <aside class="history-grid" aria-label="Member history">
+        <article class="content-card future-card"><span>Subscriptions</span><h2>Membership history</h2><p>View this member's plan subscriptions and current access status.</p><a class="secondary-button button-link" href="<?= fitlife_escape(fitlife_url('views/dashboard/subscriptions.php?q=' . rawurlencode($member['member_number']))) ?>">View Subscriptions</a></article>
         <article class="content-card future-card"><span>Coming later</span><h2>Payment history</h2><p>Payments and balances will appear here after billing is implemented.</p></article>
         <article class="content-card future-card"><span>Coming later</span><h2>Attendance history</h2><p>Check-ins and attendance activity will appear here in a future phase.</p></article>
     </aside>
